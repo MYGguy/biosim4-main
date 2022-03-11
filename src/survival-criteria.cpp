@@ -19,8 +19,8 @@ std::pair<bool, float> passedSurvivalCriterion(const Indiv &indiv, unsigned chal
     // safeCenter and radius
     case CHALLENGE_CIRCLE:
         {
-            Coord safeCenter { (int16_t)(p.sizeX / 4.0), (int16_t)(p.sizeY / 4.0) };
-            float radius = p.sizeX / 4.0;
+            Coord safeCenter { (int16_t)(p.sizeX / 8.0), (int16_t)(p.sizeY / 8.0) };
+            float radius = p.sizeX / 8.0;
 
             Coord offset = safeCenter - indiv.loc;
             float distance = offset.length();
@@ -336,6 +336,42 @@ std::pair<bool, float> passedSurvivalCriterion(const Indiv &indiv, unsigned chal
                   std::pair<bool, float> { true, (radius - distance) / radius }
                 : std::pair<bool, float> { false, 0.0 };
         }
+
+    
+
+    //New Challenges
+
+
+
+
+
+    // Survivors are all those on the right quarter of the arena
+    case CHALLENGE_LOCATION_SPECIFIC: 
+        {
+        return indiv.loc.x > p.sizeX / 2 + p.sizeX / 4 ?
+              std::pair<bool, float> { true, 1.0 }
+            : std::pair<bool, float> { false, 0.0 };
+        
+        return indiv.loc.y > p.sizey / 2 + p.sizey / 4 ?
+              std::pair<bool, float> { true, 1.0 }
+            : std::pair<bool, float> { false, 0.0 };
+        }
+
+    // Survivors are those inside the circular area defined by
+    // safeCenter and radius
+    case CHALLENGE_SMALL_CIRCLE:
+        {
+            Coord safeCenter { (int16_t)(p.sizeX / 8.0), (int16_t)(p.sizeY / 8.0) };
+            float radius = p.sizeX / 16.0;
+
+            Coord offset = safeCenter - indiv.loc;
+            float distance = offset.length();
+            return distance <= radius ?
+                  std::pair<bool, float> { true, (radius - distance) / radius }
+                : std::pair<bool, float> { false, 0.0 };
+        }
+
+
 
     default:
         assert(false);
